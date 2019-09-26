@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2> Tools </h2>
+
+<table style="border-style: solid; border-collapse:collapse;">
+<tr>
+    <th>#</th>
+    <th>size</th>
+    <th>count</th>
+    <th>colour</th>
+</tr>
+{% for td in toolCollection %}
+
+<tr>
+    <td>{{ td }}</td>
+    <td  >{{ toolCollection[td]["size"] }}</td>
+    <td>{{ toolCollection[td]["holeCount"] }}</td>
+    <td style="background-color:{{ toolCollection[td]['color'] }}">&nbsp; </td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

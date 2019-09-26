@@ -1,0 +1,28 @@
+
+<!doctype html>
+<head>
+<title>Upload new File</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+</head>
+<div id='divtwo'> 
+
+  <table border='0'>
+    <tr>
+      <td style='vertical-align:top;'>
+        <div id='toolTable'></div>
+        {% block content %} {% endblock %}
+      </td>
+      <td>
+        <div id='holePlot'></div>
+          <img src="{{ url_for('plot_png') }}" width="480" height="320">
+
+      </td>
+      <td>
+          <img src="{{ url_for('video_feed') }}" width="320" height="240">
+      </td>
+    </tr>
+  </table>
+</div>
+   
+  </body>
+</html>
