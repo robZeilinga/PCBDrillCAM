@@ -12,6 +12,25 @@ import datetime
 from camera import VideoCamera
 import json
 
+import serial_rx_tx
+
+serialPort = serial_rx_tx.SerialPort()
+
+# serial data callback function
+def OnReceiveSerialData(message):
+    str_message = message.decode("utf-8")
+    print("COM:%s"%(str_message))
+    
+
+# Register the callback above with the serial port object
+serialPort.RegisterReceiveCallback(OnReceiveSerialData)
+
+comport = "/dev/ttyACM1"
+baudrate = "115200"
+serialPort.Open(comport,baudrate)
+
+
+
 ALLOWED_EXTENSIONS = set(['drl', 'txt', 'xln'])
 global toolCollection
 toolCollection = dict()
@@ -216,6 +235,13 @@ def plot_png():
     print("plotting")
     return Response(output.getvalue(), mimetype='image/png')
 
+@app.route('/get_coms')
+def get_coms():
+    serialPort.Send("?")
+    serialPort.Send("$J=G91 X10 Y10 F300")
+    serialPort.Send("?")
+
+    return "nothing"
 def gen(camera):
     while True:
         frame = camera.get_frame()

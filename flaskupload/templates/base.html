@@ -3,6 +3,19 @@
 <head>
 <title>Upload new File</title>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type=text/javascript>
+  $(function() {
+    $('a#test').bind('click', function() {
+      $.getJSON('/get_coms',
+          function(data) {
+        //do nothing
+      });
+      return false;
+    });
+  });
+</script>
+
+
 </head>
 <div id='divtwo'> 
 
@@ -42,8 +55,16 @@
             <th><span style="font-size:xx-large;">Z:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
           </tr>
           <tr>
-            <td colspan=2 style="text-align: center"><input type="button" value="go">  </td>
-        
+            <td colspan=2 style="text-align: center">  
+            //button
+            <div class='container'>
+            <h3>Test</h3>
+              <form>
+                  <a href=# id=test><button class='btn btn-default'>Test</button></a>
+              </form>
+            
+            </div> 
+                    
         
         </td>
           </tr>
