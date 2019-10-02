@@ -3,88 +3,57 @@
 <head>
 <title>Upload new File</title>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script type=text/javascript>
+<script type="text/javascript">
   $(function() {
+    console.log("being defined")
     $('a#test').bind('click', function() {
-      $.getJSON('/get_coms',
-          function(data) {
-        //do nothing
+     $.get( "/get_ports", function(data) {
+        alert( data);
+        $('#lbl').text(data);
+      })
+      .fail(function() {
+        alert( "error" );
       });
-      return false;
     });
-  });
+
+    console.log("defining cmdChanged")
+    $('#cmbSelectComPort').bind('change', function() {
+      console.log("in cmbChanged");
+      var selObject = document.getElementById('cmbSelectComPort'); 
+      var x = selObject.selectedIndex;
+      var y = selObject.options;
+
+      document.getElementById('OpenPortDiv').style.visibility= "visible";
+      document.getElementById('lblOpenClose').innerText =  y[x].text;
+      document.getElementById('portSelectionDiv').style.visibility = "hidden";
+
+      //alert(x);
+      //alert(y);
+
+      //alert("Index: " + y[x].index + " is " + y[x].text);
+
+    });
+
+    $('#btnPortOpenClose').bind('click', function() {
+      alert("open was clicked")
+      var thisPort = document.getElementById('lblOpenClose').innerText
+      thisPort = thisPort.replace("/dev/","~dev~")
+      var baud = document.getElementById('txtBaudRate').value
+      $.get( "/open_port/" + thisPort + "/" + baud , function() {
+        //nothing
+      })
+      .fail(function() {
+        alert( "error" );
+      });
+    });
+
+});
+
 </script>
 
 
 </head>
-<div id='divtwo'> 
-
-  <table border='0'>
-    <tr>
-      <td style='vertical-align:top;'>
-        <div id='toolTable'></div>
+  <body>
         {% block content %} {% endblock %}
-      </td>
-      <td>
-        <div id='holePlot'></div>
-          <img src="{{ url_for('plot_png') }}" width="480" height="320">
-
-      </td>
-      <td>
-          <img src="{{ url_for('video_feed') }}" width="320" height="240">
-      </td>
-    </tr>
-  </table>
-</div>
-<div id='cncControl'>
-  <table border=0>
-    <tr>
-      <td colspan=6>CNC CONTROL</td>
-    </tr>
-    <tr>
-      <td>
-        <table border=1 style="border-collapse:collapse">
-          <tr><th colspan=2 style="font-size:xx-large;">COORDINATES</th></tr>
-          <tr>
-            <th><span style="font-size:xx-large;">X:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
-          </tr>
-          <tr>
-            <th><span style="font-size:xx-large;">Y:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
-          </tr>
-          <tr>
-            <th><span style="font-size:xx-large;">Z:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
-          </tr>
-          <tr>
-            <td colspan=2 style="text-align: center">  
-            //button
-            <div class='container'>
-            <h3>Test</h3>
-              <form>
-                  <a href=# id=test><button class='btn btn-default'>Test</button></a>
-              </form>
-            
-            </div> 
-                    
-        
-        </td>
-          </tr>
-        </table>
-      </td>
-      <td>
-          <table border=1 style="border-collapse:collapse">
-              <tr><th colspan=3 style="font-size:xx-large;">JOG</th></tr>
-              <tr>
-                <td><span style="font-size:xx-large;">&nbsp;</span></td><td>^</td><td>&nbsp;</td></td>
-              </tr>
-              <tr>
-                <td><span style="font-size:xx-large;"><--</span>:</span></td><td>&nbsp;</td><td><span style="font-size:xx-large;">--></span></td></td>
-              </tr>
-              <tr>
-                <td><span style="font-size:xx-large;">&nbsp;</span></td><td><span style="font-size:xx-large;">V</span></td><td>&nbsp;</td></td>
-              </tr>
-            </table>
-          </td>
-    </tr>
-  </table></div>
   </body>
 </html>

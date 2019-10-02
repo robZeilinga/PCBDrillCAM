@@ -14,22 +14,48 @@ import json
 
 import serial_rx_tx
 
+global buffer 
+buffer = ""
+global sPortName
+sPortName = ""
+global serialPort
 serialPort = serial_rx_tx.SerialPort()
+global sPorts
+sPorts = serialPort.GetSerialPorts()
+global checkit
+checkit = "hello World!"
+
 
 # serial data callback function
 def OnReceiveSerialData(message):
     str_message = message.decode("utf-8")
+
     print("COM:%s"%(str_message))
     
 
 # Register the callback above with the serial port object
 serialPort.RegisterReceiveCallback(OnReceiveSerialData)
 
-comport = "/dev/ttyACM1"
-baudrate = "115200"
-serialPort.Open(comport,baudrate)
+#comport = "/dev/ttyACM1"
+#baudrate = "115200"
 
-
+#serialPort.Open(comport,baudrate)
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("")
+print("####################################")
+sports = serialPort.GetSerialPorts()
+print("####################################")
+#print(js_ports)
 
 ALLOWED_EXTENSIONS = set(['drl', 'txt', 'xln'])
 global toolCollection
@@ -54,7 +80,7 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 #UPLOAD_FOLDER = os.path.join(os.getcwd(), UPLOAD_FOLDER)
 instancePath = os.path.dirname(app.instance_path)
-print(" instance path : " + instancePath)
+#print(" instance path : " + instancePath)
 
 UPLOAD_FOLDER = instancePath +  '/uploads'
 
@@ -71,6 +97,10 @@ colordict = { 1: "black", 2:"red", 3:"saddlebrown",
 
 def processFile(filepath):
 
+    sPorts = serialPort.GetSerialPorts()
+    checkit = "bob"
+    print(sPorts)
+    print(checkit)
     #locals
     percentageFound = False
     metricFound = False
@@ -118,16 +148,17 @@ def processFile(filepath):
             tool["holeCount"] = holeCount[int(t)]
             tool["color"] = colordict[int(t)]
             toolCollection[int(t)] = tool
-            print(toolCollection[int(t)])
+            #print(toolCollection[int(t)])
 
+        print("ToolCollection done")
         #print(toolCollection)
-        for c in toolCollection:
+        #for c in toolCollection:
             #print(toolCollection[c])
-            td = toolCollection[c]
-            print("Tool %d : %3.3f, %d holes"% (c, td['size'], td['holeCount']) )
+            #td = toolCollection[c]
+            #print("Tool %d : %3.3f, %d holes"% (c, td['size'], td['holeCount']) )
         
-        print("--------------------------------")
-        print(json.dumps(toolCollection))
+        #print("--------------------------------")
+        #print(json.dumps(toolCollection))
 
         # get min & Max
         global minX 
@@ -144,11 +175,11 @@ def processFile(filepath):
                 minY = h.filePoint[1]
             if(h.filePoint[1] > maxY):
                 maxY = h.filePoint[1]
-        print("Completed getting Min & Max")
+        #print("Completed getting Min & Max")
         # flip & zero
         for h in holes:
             h.translateAndFlipHole(minY, maxY, minX )
-        print("Holes translated & flipped")
+        #print("Holes translated & flipped")
         global maxDistance
         global h0
         global h1
@@ -184,16 +215,16 @@ def upload_file():
             filename = secure_filename(file.filename)
             global filepath
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            print("#######################################")
-            print("FilePath : " + filepath)
-            print("#######################################")
+            #print("#######################################")
+            #print("FilePath : " + filepath)
+            #print("#######################################")
             try:
                 os.remove(filepath)
             except:
                 pass
             file.save(filepath)
             # read file 
-            print("About to process file....")
+            #print("About to process file....")
             processFile(filepath)
             return redirect(url_for('uploaded_file', filename=filename))
     return '''
@@ -214,8 +245,8 @@ from flask import send_from_directory
 def uploaded_file(filename):
     for t in toolCollection:
         td = toolCollection[t]
-        print(td)
-    return render_template('index.html', toolCollection=toolCollection)
+        #print(td)
+    return render_template('index.html', toolCollection=toolCollection, sPorts=sPorts, checkit=checkit, serialPort=serialPort)
 
 @app.route('/fill_table')
 def fill_table():
@@ -235,6 +266,21 @@ def plot_png():
     print("plotting")
     return Response(output.getvalue(), mimetype='image/png')
 
+@app.route('/open_port/<portName>/<baud>')
+def open_port(portName,baud):
+    portName = portName.replace("~","/")
+    print('in Open_Port  Name: %s and baud rate %s'% (portName, baud))
+    serialPort.Open(portName,baud)
+    get_coms()
+    return "nothing"
+
+@app.route('/get_ports')
+def get_ports():
+    print("getting ports")
+    global sPorts
+    sPorts = serialPort.GetSerialPorts()
+    return  "nothing"
+
 @app.route('/get_coms')
 def get_coms():
     serialPort.Send("?")
@@ -242,6 +288,7 @@ def get_coms():
     serialPort.Send("?")
 
     return "nothing"
+
 def gen(camera):
     while True:
         frame = camera.get_frame()
@@ -250,6 +297,7 @@ def gen(camera):
 
 @app.route('/video_feed')
 def video_feed():
+    print('getting video feed')
     return Response(gen(VideoCamera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 

@@ -1,23 +1,123 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2> Tools </h2>
+<div id='divtwo'> 
+    <table border='0'>
+        <tr>
+            <td style='vertical-align:top;'>
+            <div id='toolTable'></div>
+                <h2> Tools </h2>
+                <table style="border-style: solid; border-collapse:collapse;">
+                    <tr>
+                        <th>#</th>
+                        <th>size</th>
+                        <th>count</th>
+                        <th>colour</th>
+                    </tr>
+                    {% for td in toolCollection %}
 
-<table style="border-style: solid; border-collapse:collapse;">
-<tr>
-    <th>#</th>
-    <th>size</th>
-    <th>count</th>
-    <th>colour</th>
-</tr>
-{% for td in toolCollection %}
-
-<tr>
-    <td>{{ td }}</td>
-    <td  >{{ toolCollection[td]["size"] }}</td>
-    <td>{{ toolCollection[td]["holeCount"] }}</td>
-    <td style="background-color:{{ toolCollection[td]['color'] }}">&nbsp; </td>
-</tr>
-{% endfor %}
-</table>
+                    <tr>
+                        <td>{{ td }}</td>
+                        <td  >{{ toolCollection[td]["size"] }}</td>
+                        <td>{{ toolCollection[td]["holeCount"] }}</td>
+                        <td style="background-color:{{ toolCollection[td]['color'] }}">&nbsp; </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td>
+                <div id='holePlot'></div>
+                <img src="{{ url_for('plot_png') }}" width="480" height="320">
+        
+            </td>
+            <!--
+            <td>
+                <img src="{{ url_for('video_feed') }}" width="320" height="240">
+            </td>
+            -->
+                    
+        </tr>
+    </table>
+</div>
+<div id='cncControl'>
+    <table border=1>
+        <tr>
+            <th colspan=2 style="text-align: center;">Serial Port</th>
+        </tr>
+        <tr>
+            <td>
+                <div id="portSelectionDiv" style="visibility: visible">
+                    <!-- Show port selection -->
+                    <label for="cmbSelectComPort">Select Port:</label>
+                    <select id="cmbSelectComPort" >
+                        {% for p in sPorts %}
+                            <option value="{{ p }}">{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="OpenPortDiv" style="visibility: hidden">
+                <!-- show port open closed  -->
+                    <table border=0>
+                        <tr>
+                            <td>Selected Port: <label id="lblOpenClose" for="portOpenClose"> </label></td>
+                            <td><button id="btnPortOpenClose" >Open</button></td>
+                        </tr>
+                        <tr>
+                            <td><label for='txtBaudRate'>Baud Rate : </label></td>
+                            <td ><input type='text' id='txtBaudRate' value='115200' text='115200' maxlength="7" ></td>
+                        </tr>
+                    </table>
+                   
+                </div>  
+            </td>
+        </tr>
+    </table>
+        <table border=0>
+        <tr>
+            <td colspan=6>CNC CONTROL</td>
+        </tr>
+        <tr>
+            <td>
+            <table border=1 style="border-collapse:collapse">
+                <tr><th colspan=2 style="font-size:xx-large;">COORDINATES</th></tr>
+                <tr>
+                <th><span style="font-size:xx-large;">X:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
+                </tr>
+                <tr>
+                <th><span style="font-size:xx-large;">Y:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
+                </tr>
+                <tr>
+                <th><span style="font-size:xx-large;">Z:</span></th><td style="text-align: center"><span style="font-size:xx-large;">000.000</span></td></td>
+                </tr>
+                <tr>
+                <td colspan=2 style="text-align: center">  
+                    button
+                    <div class='container' id='container1'>
+                    <h3>Test</h3>
+                    <!-- <form>  -->
+                        <label id="lbl">hello</label>
+                        <a href="#" id="test"><button class="btn btn-default">Test</button></a>
+                    <!-- </form> -->
+                    </div> 
+                </td>
+                </tr>
+            </table>
+            </td>
+            <td>
+                <table style="border-style:solid; border-collapse:collapse">
+                    <tr><th colspan=3 style="font-size:xx-large;">JOG</th></tr>
+                    <tr>
+                    <td><span style="font-size:xx-large;">&nbsp;</span></td><td>^</td><td>&nbsp;</td></td>
+                    </tr>
+                    <tr>
+                    <td><span style="font-size:xx-large;"><--</span>:</span></td><td>&nbsp;</td><td><span style="font-size:xx-large;">--></span></td></td>
+                    </tr>
+                    <tr>
+                    <td><span style="font-size:xx-large;">&nbsp;</span></td><td><span style="font-size:xx-large;">V</span></td><td>&nbsp;</td></td>
+                    </tr>
+                </table>
+                </td>
+        </tr>
+        </table>
+    </div>
 {% endblock %}
