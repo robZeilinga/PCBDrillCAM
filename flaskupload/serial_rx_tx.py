@@ -84,7 +84,7 @@ class SerialPort:
 
 
 
-    def GetSerialPorts(self):
+    def GetSerialPorts(self, sPorts, force=False):
         """ Lists serial port names
 
             :raises EnvironmentError:
@@ -92,36 +92,42 @@ class SerialPort:
             :returns:
                 A list of the serial ports available on the system
         """
-        global ports
-        if sys.platform.startswith('win'):
+        if len(sPorts) != 0 and force == False:
+            return sPorts 
+        else: 
+            global ports
             
-            ports = ['COM%s' % (i + 1) for i in range(256)]
-        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
-            # this excludes your current terminal "/dev/tty"
-            
-            ports = glob.glob('/dev/tty[A-Za-z]*')
-        elif sys.platform.startswith('darwin'):
-            print("we are on a mac")
-            
-            ports = glob.glob('/dev/tty.*')
+            if sys.platform.startswith('win'):
+                print("Getting Serial Ports : we are on a PC")
+                
+                ports = ['COM%s' % (i + 1) for i in range(256)]
+            elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+                # this excludes your current terminal "/dev/tty"
+                print("Getting Serial Ports : we are on linux")
 
-            #print(ports)
-        else:
-            raise EnvironmentError('Unsupported platform')
-        #return ports
-        
-        result = []
-        for port in ports:
-            try:
-                s = serial.Serial(port)
-                s.close()
-                result.append(port)
-            except (OSError, serial.SerialException):
-                pass
-        return result
+                ports = glob.glob('/dev/tty[A-Za-z]*')
+            elif sys.platform.startswith('darwin'):
+                print("Getting Serial Ports : we are on a mac")
+                
+                ports = glob.glob('/dev/tty.*')
+
+                #print(ports)
+            else:
+                print("Getting Serial Ports : Error - dont know what platform! ")
+
+                raise EnvironmentError('Unsupported platform')
+            #return ports
+            
+            result = []
+            for port in ports:
+                try:
+                    s = serial.Serial(port)
+                    s.close()
+                    result.append(port)
+                except (OSError, serial.SerialException):
+                    pass
+            return result
         
       
         
         
-
-

@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 import datetime
 from camera import VideoCamera
 import json
+# async to Web page 
+#from flask.ext.socketio import SocketIO, emit
+
 
 import serial_rx_tx
 
@@ -21,7 +24,8 @@ sPortName = ""
 global serialPort
 serialPort = serial_rx_tx.SerialPort()
 global sPorts
-sPorts = serialPort.GetSerialPorts()
+sPorts = []
+sPorts = serialPort.GetSerialPorts(sPorts, False)
 global checkit
 checkit = "hello World!"
 
@@ -35,27 +39,6 @@ def OnReceiveSerialData(message):
 
 # Register the callback above with the serial port object
 serialPort.RegisterReceiveCallback(OnReceiveSerialData)
-
-#comport = "/dev/ttyACM1"
-#baudrate = "115200"
-
-#serialPort.Open(comport,baudrate)
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("")
-print("####################################")
-sports = serialPort.GetSerialPorts()
-print("####################################")
-#print(js_ports)
 
 ALLOWED_EXTENSIONS = set(['drl', 'txt', 'xln'])
 global toolCollection
@@ -78,6 +61,7 @@ maxY = -999
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+#socketio = SocketIO(app)
 #UPLOAD_FOLDER = os.path.join(os.getcwd(), UPLOAD_FOLDER)
 instancePath = os.path.dirname(app.instance_path)
 #print(" instance path : " + instancePath)
@@ -97,7 +81,7 @@ colordict = { 1: "black", 2:"red", 3:"saddlebrown",
 
 def processFile(filepath):
 
-    sPorts = serialPort.GetSerialPorts()
+    #sPorts = serialPort.GetSerialPorts()
     checkit = "bob"
     print(sPorts)
     print(checkit)
@@ -201,6 +185,7 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        print("POSTING")
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
@@ -227,6 +212,7 @@ def upload_file():
             #print("About to process file....")
             processFile(filepath)
             return redirect(url_for('uploaded_file', filename=filename))
+    print("GETTING")
     return '''
     <!doctype html>
     <title>Upload new File</title>
@@ -263,7 +249,7 @@ def plot_png():
     fig = create_figure()
     output = io.BytesIO()
     FigureCanvas(fig).print_png(output)
-    print("plotting")
+    #print("plotting")
     return Response(output.getvalue(), mimetype='image/png')
 
 @app.route('/open_port/<portName>/<baud>')
@@ -276,9 +262,9 @@ def open_port(portName,baud):
 
 @app.route('/get_ports')
 def get_ports():
-    print("getting ports")
+    print("getting ports : / get_ports ==>")
     global sPorts
-    sPorts = serialPort.GetSerialPorts()
+    sPorts = serialPort.GetSerialPorts(sPorts, True)
     return  "nothing"
 
 @app.route('/get_coms')
@@ -342,3 +328,4 @@ def create_figure():
     #ys = [random.randint(1, 50) for x in xs]
     #axis.plot(xs, ys)
     return fig
+
